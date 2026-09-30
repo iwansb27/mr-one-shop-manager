@@ -1,20 +1,18 @@
 # MASTER HANDOFF BLUEPRINT — MR.ONE SHOP MANAGER
 
-**Status:** MASTER / LOCKED ARCHITECTURE
+**Status:** MASTER / LOCKED ARCHITECTURE — PRODUCT ENGINE REVISION
 
 ## 1. Purpose
 
-MR.ONE Shop Manager is a lightweight control center for managing **final digital product assets** and their distribution. It is not a production studio.
+MR.ONE Shop Manager is a lightweight control center for production assets and marketing distribution.
 
-Core operation:
+Core control operation:
 
 **RETRIEVE → VALIDATE → PREVIEW → APPROVE → DISTRIBUTE**
 
-Production happens outside the Shop Manager.
+Production may be automated, semi-automated, or manual/external depending on verified tool/API capability.
 
----
-
-## 2. Locked Core Architecture
+## 2. Locked Two-Lane Architecture
 
 ```
                          GPT
@@ -23,166 +21,230 @@ Production happens outside the Shop Manager.
                  MR.ONE AGENT
                   ORCHESTRATOR
                           │
-                      CLOUDINARY
-                     /          \
-                    /            \
-                   ▼              ▼
-           MARKETING ASSETS   PRODUCT ASSETS
-                   │              │
-                   ▼              ▼
-               CONSOLE 2       CONSOLE 1
-               MARKETING          SHOP
-                   │              │
-                   ▼              ▼
-             BUFFER PREVIEW     PREVIEW
-                   │              │
-                 APPROVE        APPROVE
-                   │              │
-                   ▼              ▼
-                BUFFER        STORLAUNCH
-                / | \
-            TikTok FB YouTube
+              ┌───────────┴───────────┐
+              ▼                       ▼
+        CONSOLE 1                 CONSOLE 2
+      PRODUCT ENGINE             MARKETING
+              │                       │
+        ┌─────┴─────┐          Preview / Package
+        ▼           ▼                  │
+   A — DIGITAL   B — DIGITAL           ▼
+     PRODUCT       CONTENT          QC-2 / APPROVE
+        │           │                  │
+        └─────┬─────┘                  ▼
+              ▼                      BUFFER
+          QC-1 / FINAL                 │
+              │                 TikTok / Facebook /
+              ▼                      YouTube
+          CLOUDINARY
+         MASTER ASSETS
 ```
 
-### Non-negotiable architecture rules
+**Console 1 and Console 2 are separate operational lanes.**
 
-1. Cloudinary is the central **FINAL MASTER ASSET warehouse**.
-2. Cloudinary is not a production workspace, editor, or experimentation area.
-3. Production happens outside MR.ONE Shop Manager.
-4. QC-1 happens outside Shop Manager before a final asset enters Cloudinary.
-5. MR.ONE Agent / Orchestrator sits between GPT and the two lanes.
-6. The Agent is not a third lane, storage system, or production engine.
-7. Marketing and Product lanes remain completely separate.
-8. QC-2 happens inside the relevant console before execution.
-9. Product assets go directly to Storlaunch after approval.
-10. Marketing assets use Buffer for scheduling/distribution.
-11. Temporary marketing distribution copies may be cleaned after 24 hours.
-12. Cloudinary master assets must never be automatically deleted.
-13. Do not add unnecessary databases, APIs, or architecture without a real requirement.
-14. **Free-first / zero-rupiah-first** is the default principle.
+Console 1 does **not** publish products to a marketplace.
 
----
+Console 2 does **not** create the master content.
 
-## 3. Production Boundary
+The only functional relationship is:
 
-Production is intentionally outside MR.ONE Shop Manager:
+**Console 2 → references B master → uses live Cloudinary URL/reference → marketing distribution.**
 
-**Iwan + GPT + external production engine → Production Result → QC-1 → Final Asset → Cloudinary**
+The master file remains in Cloudinary.
 
-Shop Manager must NOT contain:
+## 3. Console 1 — PRODUCT ENGINE
 
-- production editor
-- production engine
-- production upload module
-- draft production workspace
-- production experimentation center
+The previous Store/Shop Console 1 is removed as an operational concept.
 
-The Shop Manager manages final assets and distribution only.
+Console 1 becomes:
 
----
+# PRODUCT ENGINE
 
-## 4. Cloudinary — Final Master Repository
+It has two paired components:
 
-Cloudinary stores final assets only.
+### A — DIGITAL PRODUCT
 
-Each asset should have deterministic identity and metadata:
+The permanent master product intended for sale or later manual delivery.
 
-- Product ID
-- Asset ID
-- Domain: PRODUCT / MARKETING
-- Asset role/type
-- Version
-- Status
-- Tags / metadata
-- Platform/context where relevant
+Possible types:
 
-Examples:
+- PDF / ebook
+- XLSX / spreadsheet
+- ZIP package
+- planner / journal
+- Canva/business/content template
+- niche template
+- CapCut/video template when a valid production and delivery method is available
+
+### B — DIGITAL CONTENT
+
+The permanent marketing-content master belonging to A.
+
+Initial final output:
+
+**SHORT-FORM VIDEO / MP4**
+
+Default target:
+
+**15–25 seconds**, dynamically adapted to the product/channel.
+
+Images may be used as source material during production, but B's primary final marketing asset is video.
+
+## 4. A ↔ B Pairing Contract
+
+Every product has one stable Product ID.
+
+Example:
 
 ```
-MRONE-001-PRODUCT-01-V1.pdf
-MRONE-001-MARKETING-01-V1.mp4
+PRODUCT 001
+
+001-A
+DIGITAL PRODUCT MASTER
+Budget Planner.pdf
+
+001-B
+DIGITAL CONTENT MASTER
+Budget Planner Marketing.mp4
 ```
 
-Structured metadata example:
+Identity:
 
 ```
 Product ID: MRONE-001
-Asset ID: MRONE-001-MKT-VID-01
-Domain: MARKETING
-Role: PROMO_VIDEO
-Version: V1
-Status: FINAL
+A Asset ID: MRONE-001-A
+B Asset ID: MRONE-001-B
+
+PAIR: MRONE-001-A ↔ MRONE-001-B
 ```
 
-The Agent retrieves assets deterministically by Product ID, Asset ID, name, metadata, or tags.
+The shared Product ID is the deterministic pairing key.
 
----
-
-## 5. MR.ONE Agent / Orchestrator
-
-The Agent is intentionally lightweight.
-
-Responsibilities:
-
-- detect intent
-- retrieve the correct Cloudinary asset
-- validate identity and metadata
-- route to PRODUCT or MARKETING
-- send selected asset/data to the correct console
-- create/track a lightweight Job ID
-- return execution status
-
-Examples:
+For multiple marketing videos:
 
 ```
-Ambil MRONE-001 PDF untuk Shop
+MRONE-001-B-VID-01-V1.mp4
+MRONE-001-B-VID-02-V1.mp4
 ```
 
-→ Product / Console 1
+All remain paired to **MRONE-001-A**.
+
+## 5. Production Modes
+
+Each A or B production job uses one of four modes:
+
+| Mode | Meaning |
+|---|---|
+| **AUTO** | Verified automated generation is available |
+| **SEMI-AUTO** | Automation prepares/executes part of production and an external/manual step completes it |
+| **MANUAL** | Production happens outside the app; final result is registered and stored in Product Engine |
+| **NOT AVAILABLE** | No reliable route exists; do not force an integration |
+
+Manual does **not** mean the user must build the editor inside Console 1.
+
+Example:
 
 ```
-Ambil MRONE-001 video 02 untuk marketing TikTok
+PRODUCT ENGINE
+      │
+      │ MANUAL
+      ▼
+External tool
+(CapCut / Canva / other)
+      │
+      ▼
+Final result
+      │
+      ▼
+QC-1
+      │
+      ▼
+Cloudinary MASTER
 ```
 
-→ Marketing / Console 2
+No fake editor, fake API, or unverified automation.
 
-If identity is ambiguous, the Agent must stop rather than guess.
+## 6. Console 1 UI / Control Contract
 
----
+Console 1 is a **production control layer**, not a collection of third-party editors.
 
-## 6. PRODUCT LANE — CONSOLE 1
+### A — DIGITAL PRODUCT panel
 
-Flow:
+- Create Product
+- Product ID
+- Product Name
+- Product Category
+- Product Type
+- Production Mode
+- Production Status
+- Version
+- Master Asset
+- QC-1 Status
+- Cloudinary Status
+- Linked B Content
 
-**Product Assets → Console 1 → Preview → QC-2 → Approve → Storlaunch**
+### B — DIGITAL CONTENT panel
 
-Rules:
+- Create Content
+- Content ID
+- Linked Product ID
+- Content Type: VIDEO
+- Production Mode
+- Production Status
+- Version
+- Master Video
+- QC-1 Status
+- Cloudinary Status
+- Console 2 Availability
 
-- transactional/store-oriented
-- no scheduling layer
-- after QC-2 approval, publish directly to Storlaunch
-- no Buffer in this lane
+### Control states
 
-Possible product assets:
+**AUTO → RUN → RESULT → QC-1 → SAVE MASTER**
 
-- PDF
-- ZIP
-- cover
-- preview representation
-- main digital product file
-- listing-support data
+**SEMI-AUTO → PREPARE → ASSISTED/EXTERNAL STEP → RESULT → QC-1 → SAVE MASTER**
 
----
+**MANUAL → REGISTER RESULT → QC-1 → SAVE MASTER**
 
-## 7. MARKETING LANE — CONSOLE 2
+**NOT AVAILABLE → STOP**
 
-Flow:
+## 7. Autonomous Production Boundary
 
-**Marketing Assets → Console 2 → Buffer Preview → QC-2 → Schedule → Buffer → TikTok/Facebook/YouTube**
+Where a verified free/available API or built-in engine exists, Product Engine may call it.
 
-Each marketing package should include:
+Where no reliable API exists, Product Engine uses the external/manual path and registers the finished result.
 
-- media
+Production tools are replaceable adapters. Product Engine owns:
+
+- production job
+- Product ID
+- Asset ID
+- A/B pairing
+- status
+- version
+- QC-1
+- Cloudinary master registration
+
+It does not need to own the vendor's editor.
+
+## 8. Cloudinary — Permanent Master Repository
+
+Cloudinary is the permanent master warehouse for A and B.
+
+**A master: NEVER AUTO-DELETE**
+
+**B master: NEVER AUTO-DELETE**
+
+Console 2 uses the live Cloudinary URL/reference for B. It does not move, duplicate, or delete the master unless a later explicit architecture requires a separate temporary distribution copy.
+
+Any temporary distribution copy may be cleaned according to its retention policy.
+
+## 9. Console 2 — PRESERVE EXISTING ARCHITECTURE
+
+Console 2 is not redesigned in this revision.
+
+Its existing marketing package remains:
+
+- media/reference
 - title
 - description/caption
 - CTA
@@ -190,46 +252,21 @@ Each marketing package should include:
 - target platform
 - target channel/account
 - channel ID
-- schedule/date/time
+- schedule
 
-Preview must show metadata, not only the media.
+Operational flow:
 
-Marketing supports large assets such as video.
+**B master reference → Preview → QC-2 → Approve → Schedule → Buffer → TikTok / Facebook / YouTube**
 
-Temporary distribution copies may be automatically deleted after 24 hours. The Cloudinary master remains untouched.
+Console 2 requests B by Product ID / Asset ID and receives the live Cloudinary URL/reference.
 
-**Instagram is not part of this Buffer lane for now.**
+Console 2 is the marketing/distribution lane; it is not the production lane.
 
----
-
-## 8. Buffer Channel Verification
-
-Console 2 must verify actual destinations, not merely report that an API is connected.
-
-After Buffer connection:
-
-1. Detect channels/accounts.
-2. Identify platform.
-3. Show channel/page name.
-4. Show channel ID.
-5. Verify the intended destination.
-6. Block publishing if the channel is missing, ambiguous, or mismatched.
-
-Target platforms:
-
-- TikTok
-- Facebook
-- YouTube
-
----
-
-## 9. QC SYSTEM
+## 10. QC
 
 ### QC-1 — Production QC
 
-Performed outside Shop Manager.
-
-Check:
+Before an asset becomes a master:
 
 - content correctness
 - visual correctness
@@ -237,14 +274,11 @@ Check:
 - format
 - version
 - completeness
-
-Only approved final assets enter Cloudinary.
+- A/B pairing
 
 ### QC-2 — Distribution QC
 
-Performed inside the relevant console before execution.
-
-Check:
+Console 2 retains its existing checks:
 
 - Product ID
 - Asset ID
@@ -258,290 +292,93 @@ Check:
 - description
 - CTA
 - product link
-- marketing schedule
+- schedule
 
-QC-2 is the second safety filter against Agent routing mistakes.
+Do not redesign Console 2 without a new verified requirement.
 
----
+## 11. Asset Naming
 
-## 10. Minimum API / Connector Set
-
-Minimum required integrations:
-
-- Cloudinary API / connector
-- Storlaunch API
-- Buffer API
-
-AI model gateways/providers are not mandatory for the Shop Manager foundation.
-
-Do not add unnecessary integrations before a real requirement exists.
-
-Secrets/API keys must remain server-side where applicable.
-
----
-
-## 11. Job ID / Audit
-
-Use a lightweight audit record.
-
-Example:
+Recommended:
 
 ```
-JOB-00027
-Intent: Marketing
-Product: MRONE-001
-Asset: MKT-VID-02
-Platform: TikTok
-Channel ID: xxxx
-Schedule: 2026-10-03 19:00
-QC-2: APPROVED
-Buffer: SCHEDULED
-Status: SUCCESS
+MRONE-001-A-PRODUCT-V1.pdf
+MRONE-001-B-CONTENT-V1.mp4
 ```
 
-Recommended fields:
-
-- Job ID
-- Product ID
-- Asset ID
-- intent
-- source
-- destination
-- timestamp
-- QC-2 status
-- execution status
-- result/error
-
----
-
-## 12. Safety / Error Rules
-
-- Asset not found → **STOP**
-- Product ID ambiguous → **STOP**
-- Platform mismatch → **STOP**
-- Channel ID not detected → **STOP**
-- API failure → do not claim success
-- Duplicate publish → use idempotency/duplicate protection where supported
-- Never automatically delete a Cloudinary master
-- Temporary marketing copies may be cleaned after 24 hours
-- Retry only when safe
-- Validate routing before execution
-
----
-
-## 13. Shop Manager UI Philosophy
-
-The interface should remain simple.
-
-Primary interface:
-
-**One natural-language command/prompt field**
-
-Optional:
-
-- Console 1 shortcut
-- Console 2 shortcut
-- result/distribution preview panel
-
-Shop Manager should NOT require:
-
-- manual file upload
-- production editor
-- production preview workspace
-- production engine selection
-
-Example command:
+Multiple B assets:
 
 ```
-Ambil MRONE-001 product PDF dan siapkan untuk Console 1.
+MRONE-001-B-VID-01-V1.mp4
+MRONE-001-B-VID-02-V1.mp4
 ```
 
+## 12. Agent Routing
+
 ```
-Ambil MRONE-001 marketing video 02 untuk TikTok,
-tampilkan channel ID dan preview sebelum saya approve.
+Buat produk digital MRONE-001
+→ Console 1 / A
+
+Buat video marketing untuk MRONE-001
+→ Console 1 / B
+
+Ambil video marketing MRONE-001 untuk TikTok
+→ Console 2 receives B live URL/reference
 ```
 
----
+Ambiguous identity → **STOP**, never guess.
 
-# 14. Build Phases
+## 13. Safety / Free-First
 
-## PHASE 0 — FREEZE ARCHITECTURE
+- Missing Product ID → STOP
+- Missing asset → STOP
+- A/B mismatch → STOP
+- Unsupported integration → MANUAL or NOT AVAILABLE
+- API failure → never claim success
+- Cloudinary master → never auto-delete
+- Console 2 must not delete the master
+- No unnecessary database/API
+- Free / zero-rupiah first
 
-Lock:
+## 14. Current Product Scope
 
-- two lanes
-- Cloudinary final-only
-- Agent in the middle
-- production outside
-- QC-1 and QC-2
-- Product → Storlaunch
-- Marketing → Buffer
-- marketing scheduling
-- 24-hour temporary cleanup
+Initial A candidates:
 
-Do not add architecture before the foundation is stable.
+- budget/financial planners
+- financial trackers
+- UMKM bookkeeping templates
+- life planners
+- journals
+- Canva templates
+- business/content templates
+- ebooks/guides
+- spreadsheets
+- niche templates
+- CapCut/video templates where a valid method is available
 
-## PHASE 1 — ASSET CONTRACT
+Initial B:
 
-Define:
+**short-form marketing video / MP4**
 
-- Product ID
-- Asset ID
-- naming convention
-- folder structure
-- tags
-- metadata
-- domain
-- asset role
-- version
-- final status
+Target duration: **15–25 seconds**, adapted per product/channel.
 
-## PHASE 2 — CLOUDINARY FOUNDATION
+CTA, caption, description, platform, channel and scheduling remain Console 2 responsibilities.
 
-Implement:
+## 15. Implementation Boundary
 
-- folder structure
-- final asset management
-- search/list/get details
-- metadata
-- secure delivery URLs
-- master protection
-- deterministic retrieval
+The repository currently contains the architecture/documentation foundation, not a complete application source tree. Therefore this change establishes the Product Engine contract and build specification first.
 
-## PHASE 3 — SHOP SHELL
+Actual production-tool connectors are added only after their capability/API is verified.
 
-Implement:
+Final target:
 
-- one command/prompt field
-- result/preview panel
-- no production center
-- no production engine
-- no production upload module
+**CONSOLE 1 = PRODUCT ENGINE**
 
-## PHASE 4 — MR.ONE AGENT
+**A = DIGITAL PRODUCT MASTER**
 
-Implement:
+**B = DIGITAL CONTENT MASTER**
 
-- intent detection
-- asset retrieval
-- validation
-- destination routing
-- PRODUCT / MARKETING separation
+**CONSOLE 2 = MARKETING DISTRIBUTION**
 
-## PHASE 5 — CONSOLE 1
+**CLOUDINARY = PERMANENT MASTER REPOSITORY**
 
-Implement:
-
-**Cloudinary → Product Asset → Console 1 → Preview → QC-2 → Approve → Storlaunch**
-
-No scheduling.
-
-## PHASE 6 — CONSOLE 2
-
-Implement:
-
-**Cloudinary → Marketing Asset → Console 2 → Marketing Distribution Package → Preview → QC-2 → Schedule → Buffer**
-
-## PHASE 7 — BUFFER CHANNEL VERIFICATION
-
-Implement:
-
-- connection
-- channel detection
-- platform
-- channel name
-- channel ID
-- destination verification
-- blocking invalid destinations
-
-## PHASE 8 — 24-HOUR CLEANUP
-
-Only temporary marketing distribution copies may be cleaned.
-
-Never delete the Cloudinary master.
-
-## PHASE 9 — ERROR & AUDIT
-
-Implement:
-
-- Job ID
-- execution status
-- retry rules
-- duplicate protection
-- routing validation
-- channel validation
-- error logs
-- publish confirmation
-
-## PHASE 10 — END-TO-END TEST
-
-### Product test
-
-Cloudinary → Console 1 → Preview → QC-2 → Approve → Storlaunch
-
-### Marketing test
-
-Cloudinary → Console 2 → Preview → QC-2 → Schedule → Buffer → channel → cleanup
-
-### Failure tests
-
-- wrong Product ID
-- missing asset
-- wrong console
-- wrong channel ID
-- channel undetected
-- duplicate publish
-- API error
-- schedule failure
-
----
-
-# 15. Operational Workflow
-
-1. Produce externally using GPT + the selected production engine.
-2. Perform QC-1.
-3. Put the final approved asset into Cloudinary.
-4. Give a natural-language command to MR.ONE Agent.
-5. Agent retrieves and routes the asset.
-6. Review QC-2.
-7. Product → approve → direct Storlaunch publication.
-8. Marketing → approve → schedule → Buffer → TikTok/Facebook/YouTube.
-9. Clean temporary marketing distribution copies after 24 hours.
-10. Preserve the Cloudinary master.
-
----
-
-# 16. Scope Boundary — Not Defined Yet
-
-This blueprint intentionally does NOT define:
-
-- product types
-- digital product strategy
-- production engine
-- production prompt system
-- video engine
-- ebook/PDF/template production workflow
-- AI model/provider selection
-- external production tool stack
-
-Those belong to the next design discussion.
-
-The Shop Manager architecture remains the locked foundation.
-
----
-
-# 17. Master Rule
-
-**MR.ONE Shop Manager is a lightweight final-asset and distribution control center — not a production studio.**
-
-Its job is:
-
-**RETRIEVE → VALIDATE → PREVIEW → APPROVE → DISTRIBUTE**
-
-The two lanes remain separate:
-
-**PRODUCT → CONSOLE 1 → QC-2 → STORLAUNCH**
-
-**MARKETING → CONSOLE 2 → QC-2 → SCHEDULE → BUFFER → TIKTOK / FACEBOOK / YOUTUBE**
-
-Cloudinary remains the protected final master repository.
+A and B remain permanently stored and paired by Product ID.
