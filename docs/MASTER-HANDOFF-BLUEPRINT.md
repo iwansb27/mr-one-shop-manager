@@ -24,7 +24,7 @@ Production may be automated, semi-automated, or manual/external depending on ver
               ┌───────────┴───────────┐
               ▼                       ▼
         CONSOLE 1                 CONSOLE 2
-      PRODUCT ENGINE             MARKETING
+     MASTER STORAGE             MARKETING
               │                       │
         ┌─────┴─────┐          Preview / Package
         ▼           ▼                  │
@@ -52,13 +52,13 @@ The only functional relationship is:
 
 The master file remains in Cloudinary.
 
-## 3. Console 1 — PRODUCT ENGINE
+## 3. Console 1 — MASTER ASSET STORAGE
 
 The previous Store/Shop Console 1 is removed as an operational concept.
 
 Console 1 becomes:
 
-# PRODUCT ENGINE
+# MASTER ASSET STORAGE
 
 It has two paired components:
 
@@ -166,7 +166,7 @@ No fake editor, fake API, or unverified automation.
 
 ## 6. Console 1 UI / Control Contract
 
-Console 1 is a **production control layer**, not a collection of third-party editors.
+Console 1 is a **master-asset storage and registration layer**, not a production engine or collection of third-party editors.
 
 ### A — DIGITAL PRODUCT panel
 
@@ -209,11 +209,11 @@ Console 1 is a **production control layer**, not a collection of third-party edi
 
 ## 7. Autonomous Production Boundary
 
-Where a verified free/available API or built-in engine exists, Product Engine may call it.
+Where a verified free/available API or built-in engine exists, Console 1 does not produce it; an external production tool may be called only through a separately verified agent/tool bridge.
 
 Where no reliable API exists, Product Engine uses the external/manual path and registers the finished result.
 
-Production tools are replaceable adapters. Product Engine owns:
+Production tools are external. Console 1 owns:
 
 - production job
 - Product ID
@@ -371,7 +371,7 @@ Actual production-tool connectors are added only after their capability/API is v
 
 Final target:
 
-**CONSOLE 1 = PRODUCT ENGINE**
+**CONSOLE 1 = MASTER ASSET STORAGE**
 
 **A = DIGITAL PRODUCT MASTER**
 
@@ -384,7 +384,7 @@ Final target:
 A and B remain permanently stored and paired by Product ID.
 
 
-## 17. PRODUCTION CONTROL CORRECTION — LOCKED
+## 17. PRODUCTION BOUNDARY — LOCKED
 
 **Important correction:** Console 1 is an **agentic control/orchestration layer**, not a production editor.
 
@@ -417,7 +417,7 @@ Actual production of A and B happens outside Console 1. Console 1 only:
 
 Therefore:
 
-**Console 1 = control plane.**  
+**Console 1 = master storage / registration plane.**  
 **External tools = production plane.**  
 **Cloudinary = permanent master plane.**  
 **Console 2 = marketing/distribution plane.**
