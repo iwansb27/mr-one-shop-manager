@@ -382,3 +382,46 @@ Final target:
 **CLOUDINARY = PERMANENT MASTER REPOSITORY**
 
 A and B remain permanently stored and paired by Product ID.
+
+
+## 17. PRODUCTION CONTROL CORRECTION — LOCKED
+
+**Important correction:** Console 1 is an **agentic control/orchestration layer**, not a production editor.
+
+Actual production of A and B happens outside Console 1. Console 1 only:
+- decides the production route;
+- prepares brief/prompt/input;
+- calls a verified production adapter when the runtime can actually call it;
+- receives/registers the finished result;
+- performs/records QC-1;
+- pairs A ↔ B by Product ID;
+- stores the permanent master reference in Cloudinary;
+- reports status.
+
+### Tool capability map
+
+| Tool | Role | API/tool capability | Status for autonomous use |
+|---|---|---|---|
+| Canva | A design/template production | Official Connect REST API; ChatGPT Canva tool available | **Adapter path NOT YET VERIFIED** |
+| Cloudinary | A/B permanent master storage | Upload/Admin API; ChatGPT Cloudinary tool available | **Storage control available in ChatGPT; repo-agent bridge NOT YET VERIFIED** |
+| Descript | B video production/editing | ChatGPT tool available | **Repo-agent execution NOT YET VERIFIED** |
+| HeyGen | B video generation | ChatGPT tool available | **Repo-agent execution NOT YET VERIFIED** |
+| ElevenLabs | B media generation | API + ChatGPT tools; current Image/Video API requires Pro+ | **Do not hard-wire under Free-First** |
+| Magnific | A/B visual generation/editing | ChatGPT tool available | **Repo-agent execution NOT YET VERIFIED** |
+| Adobe Express | A design production | ChatGPT tool available | **Repo-agent execution NOT YET VERIFIED** |
+| AI Video Maker | B video generation | ChatGPT tool available | **ChatGPT-side only until repo-agent bridge is verified** |
+| CapCut | A template / B video production | No verified usable API path for this architecture | **EXTERNAL-MANUAL** |
+| Buffer | Console 2 distribution | Public GraphQL API | **Console 2 only; not a Console 1 production tool** |
+
+**Critical rule:** a tool being available to ChatGPT does not automatically make it callable by the Shop Manager repository's agent. The repository agent needs its own API, MCP/tool bridge, authenticated runtime access, or equivalent verified execution path.
+
+Therefore:
+
+**Console 1 = control plane.**  
+**External tools = production plane.**  
+**Cloudinary = permanent master plane.**  
+**Console 2 = marketing/distribution plane.**
+
+If no verified autonomous execution path exists, the status is **EXTERNAL-MANUAL**, never fake AUTO.
+
+This correction does not redesign Console 2.
