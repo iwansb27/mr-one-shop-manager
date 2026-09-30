@@ -10,20 +10,16 @@ MR.ONE Shop Manager is a lightweight control center for production assets and ma
 
 ## Current architecture
 
-### Console 1 — PRODUCT ENGINE
+### Console 1 — MASTER ASSET STORAGE
 
-Two paired production components:
+Two paired master-asset components:
 
 - **A — Digital Product Master**
 - **B — Digital Content Master (short-form video)**
 
 A and B share the same Product ID and remain permanently stored in Cloudinary.
 
-Production modes:
-
-**AUTO / SEMI-AUTO / MANUAL / NOT AVAILABLE**
-
-Manual production may use external tools; the finished result is registered, QC-1 checked, and stored in Cloudinary.
+Production is **outside Console 1**. Console 1 registers finished results, performs QC-1, maintains A/B pairing, and stores the permanent master in Cloudinary.
 
 ### Console 2 — MARKETING
 
@@ -52,10 +48,8 @@ A and B masters are never automatically deleted.
 
 Temporary distribution copies, if created, may be cleaned according to their retention policy.
 
-## Production boundary
+## Storage / registration boundary
 
-Production tools are replaceable. Where a verified API/engine exists, Product Engine may automate it. Where it does not, production can happen externally/manual and the final result is registered back into Product Engine.
-
-No fake or unverified integrations.
+Console 1 is **not a production engine**. Actual production happens outside the console. Console 1 only registers the finished A/B assets, performs QC-1, maintains pairing, and stores the permanent master in Cloudinary. No fake or unverified production integration.
 
 See [MASTER HANDOFF BLUEPRINT](docs/MASTER-HANDOFF-BLUEPRINT.md).
